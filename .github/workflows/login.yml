@@ -22,4 +22,8 @@ jobs:
         run: |
           jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json > /tmp/config.json
           mv /tmp/config.json ~/.docker/config.json
-          cat ~/.docker/config.json
+
+      - name: ECR Public pull
+        run: |
+          docker pull ecr-public.aws.com/docker/library/hello-world:latest
+          docker run ecr-public.aws.com/docker/library/hello-world:latest
