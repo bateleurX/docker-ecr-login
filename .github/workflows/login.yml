@@ -20,4 +20,6 @@ jobs:
       - name: check docker config
         id: docker-config
         run: |
+          jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json > /tmp/config.json
+          mv /tmp/config.json ~/.docker/config.json
           cat ~/.docker/config.json
