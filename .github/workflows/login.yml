@@ -9,21 +9,36 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_NAME }}
           aws-region: us-east-1
 
-      - name: check docker config
+      - name: set credential helper
         id: docker-config
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
         run: |
-          jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json > /tmp/config.json
+          jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json | \
+          jq --arg key "${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
           mv /tmp/config.json ~/.docker/config.json
 
       - name: ECR Public pull
         run: |
           docker pull ecr-public.aws.com/docker/library/hello-world:latest
           docker run ecr-public.aws.com/docker/library/hello-world:latest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/$${{ secrets.ECR_REPO_NAME }}:1
+          push: true
