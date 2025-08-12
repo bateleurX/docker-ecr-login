@@ -25,7 +25,7 @@ jobs:
           AWS_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
         run: |
           jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json | \
-          jq --arg key "${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
+          jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
           mv /tmp/config.json ~/.docker/config.json
 
       - name: ECR Public pull
@@ -41,5 +41,5 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/$${{ secrets.ECR_REPO_NAME }}:1
+          tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com/${{ secrets.ECR_REPO_NAME }}:1
           push: true
