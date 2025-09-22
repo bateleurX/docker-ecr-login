@@ -23,14 +23,13 @@ jobs:
         run: |
           jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' ~/.docker/config.json | \
           jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr-ecr.ap-northeast-1.on.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
-          jq --arg key "public.ecr.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
-          jq --arg key "ecr-public.aws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
+          jq --arg key "public.ecr.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
           mv /tmp/config.json ~/.docker/config.json
 
       - name: ECR Public pull
         run: |
-          docker pull ecr-public.aws.com/docker/library/hello-world:latest
-          docker run ecr-public.aws.com/docker/library/hello-world:latest
+          docker pull public.ecr.aws/docker/library/hello-world:latest
+          docker run public.ecr.aws/docker/library/hello-world:latest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
