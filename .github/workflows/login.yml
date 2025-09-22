@@ -20,9 +20,6 @@ jobs:
 
       - name: set credential helper
         id: docker-config
-        env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
         run: |
           jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json | \
           jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
