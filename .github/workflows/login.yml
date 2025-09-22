@@ -21,7 +21,7 @@ jobs:
       - name: set credential helper
         id: docker-config
         env:
-          DOCKER_CONFIG: ${{ github.workspace }}/.docker/config.json
+          DOCKER_CONFIG: ~/.docker/config.json
         run: |
           tmp_config=$(mktemp)
           jq \
