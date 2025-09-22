@@ -21,9 +21,10 @@ jobs:
       - name: set credential helper
         id: docker-config
         run: |
-          jq -s  '.[0] * .[1]' ~/.docker/config.json docker_config_fragment.json | \
-          jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
-          jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr-ecr.ap-northeast-1.on.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
+          jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-1.amazonaws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' ~/.docker/config.json | \
+          jq --arg key "${{ secrets.AWS_ACCOUNT_ID }}.dkr-ecr.ap-northeast-1.on.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
+          jq --arg key "public.ecr.aws" --arg value "ecr-login" '.credHelpers += {($key): $value}' | \
+          jq --arg key "ecr-public.aws.com" --arg value "ecr-login" '.credHelpers += {($key): $value}' > /tmp/config.json
           mv /tmp/config.json ~/.docker/config.json
 
       - name: ECR Public pull
