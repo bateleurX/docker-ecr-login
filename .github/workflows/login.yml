@@ -20,8 +20,6 @@ jobs:
 
       - name: set credential helper
         id: docker-config
-        env:
-          DOCKER_CONFIG: ~/.docker/config.json
         run: |
           tmp_config=$(mktemp)
           jq \
@@ -30,8 +28,8 @@ jobs:
             --arg key3 "public.ecr.aws" \
             --arg value "ecr-login" \
             '.credHelpers |= (. + {($key1): $value, ($key2): $value, ($key3): $value})' \
-            $DOCKER_CONFIG > $tmp_config
-          mv $tmp_config $DOCKER_CONFIG
+            ~/.docker/config.json > $tmp_config
+          mv $tmp_config ~/.docker/config.json
 
       - name: ECR Public pull
         run: |
